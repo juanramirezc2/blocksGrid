@@ -1,0 +1,12 @@
+.collage-grid-item{
+  float:left;
+  width:25%;
+  border:solid 1px white;
+}
+.collage-grid-item2{
+  width:50%;
+}
+img{
+  width:100%;
+  height:auto;
+}
