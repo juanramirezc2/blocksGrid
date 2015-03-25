@@ -1,21 +1,20 @@
-/*window.onload=function(){
-  var container = document.querySelector('#layout-grid');
-  var msnry = new Masonry(container, {
-    itemSelector: '.collage-grid-item',
-    gutter: 18
-  });
-} */
 function Gallery(selector){
-   classComponent="."+selector;
+   classComponent=selector;
+   this.parentElement=selector;
    this.elementSpecs=[];
    this.errorAspect=10;
-   document.querySelectorAll(classComponent)[0].style.position="relative";
-   document.querySelectorAll(classComponent)[0].style.height="600px";
-   this.contentWidth=document.querySelectorAll(classComponent)[0].offsetWidth;
+   this.gutter=18;
+   classComponent.style.position="relative";
+   classComponent.style.height="600px";
+   this.contentWidth=classComponent.offsetWidth;
+
+
+    /*Methods of the object */
    this.setElementPos=function(element,cursorVertical,cursorHorizontal){
      element.style.top=cursorVertical+"px";
      element.style.left=cursorHorizontal+"px";
    }
+
    this.checkHigher=function(iterator,HiderElementsStack){
      exist=HiderElementsStack[iterator.toString()] != undefined;
      if(exist){
@@ -28,6 +27,9 @@ function Gallery(selector){
        return false;
      }
    }
+
+
+
    this.setPositions=function(elementSpecs, contentWidth){
      var iterator=1;
      var cursorHorizontal=0;
@@ -56,7 +58,7 @@ function Gallery(selector){
         }
       }else{
         iterator=1;
-        document.querySelectorAll(classComponent)[0].style.width=cursorHorizontal+"px";
+        classComponent.style.width=cursorHorizontal+"px";
         cursorHorizontal=0;
         cursorVertical+=element.offsetHeight
         checked=this.checkHigher(iterator,HiderElementsStack);
@@ -72,48 +74,47 @@ function Gallery(selector){
         else{
           iterator++;
         }
-
       }
+
 
      }
    }
+
  this.forEach = function (array, callback, scope) {
         for (var i = 0; i < array.length; i++) {
           callback.call(scope, i, array[i]); // passes back stuff we need
         }
       };
 
-    var myNodeList = document.querySelectorAll(classComponent+' .collage-grid-item');
-
+    
      var getSpects=function(index,value){
-        console.log();
         ratioHiger=value.offsetHeight>value.offsetWidth+this.errorAspect;
         ratioWider= value.offsetWidth > value.offsetHeight + this.errorAspect;
+        console.log()
         this.elementSpecs.push({"row":0,"ratioH":ratioHiger,"ratioW":ratioWider,"el": value});
       }
+    var myNodeList = $(classComponent).find('.collage-grid-item');
     this.forEach(myNodeList,getSpects,this);
     this.setPositions(this.elementSpecs,this.contentWidth);
-
+  this.onResize=function(){
+      var myNodeList = $(this.parentElement).find('.collage-grid-item');
+      this.forEach(myNodeList,getSpects,this);
+      this.setPositions(this.elementSpecs,this.contentWidth);
+   }
 }
 
-window.onload=function(){
-  stackRepetitives=[];
-  collages=document.querySelectorAll("[data-component]");
 
-  [].forEach.call(collages, function(collage) {
-    classes=collage.getAttribute("class");
-    if(stackRepetitives.indexOf(classes)!= -1){
-      collage.removeAttribute("class");
-      collage.setAttribute("class", classes+"-2");
-      l=collage.getAttribute("class");
-      gallery=new Gallery(l);
-    }
-    else{
-      stackRepetitives.push(classes);
-      c=collage.getAttribute("class");
-      gallery=new Gallery(c);
-    }
-
+$(window).bind("load", function() {
    
-  } );
-}
+      collagesStack=[];
+      collages=document.querySelectorAll("[data-component]");
+      [].forEach.call(collages, function(collage) {
+            collagesStack.push(new Gallery(collage));
+      });
+});
+
+
+
+
+
+  
