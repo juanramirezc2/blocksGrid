@@ -1,25 +1,20 @@
 /*window.onload=function(){
-
   var container = document.querySelector('#layout-grid');
   var msnry = new Masonry(container, {
-    itemSelector: '.collage-grid-item'
-    //gutter: 18
+    itemSelector: '.collage-grid-item',
+    gutter: 18
   });
-
-}
-*/
-function Gallery(selector,options){
+} */
+function Gallery(selector){
+   classComponent="."+selector;
    this.elementSpecs=[];
    this.errorAspect=10;
-   this.gutter=18;
-
-   document.querySelectorAll('#layout-grid')[0].style.position="relative";
-   this.contentWidth=document.querySelectorAll('#layout-grid')[0].offsetWidth;
+   document.querySelectorAll(classComponent)[0].style.position="relative";
+   document.querySelectorAll(classComponent)[0].style.height="600px";
+   this.contentWidth=document.querySelectorAll(classComponent)[0].offsetWidth;
    this.setElementPos=function(element,cursorVertical,cursorHorizontal){
      element.style.top=cursorVertical+"px";
      element.style.left=cursorHorizontal+"px";
-     console.log("top",cursorVertical);
-     console.log("left",cursorHorizontal);
    }
    this.checkHigher=function(iterator,HiderElementsStack){
      exist=HiderElementsStack[iterator.toString()] != undefined;
@@ -61,6 +56,7 @@ function Gallery(selector,options){
         }
       }else{
         iterator=1;
+        document.querySelectorAll(classComponent)[0].style.width=cursorHorizontal+"px";
         cursorHorizontal=0;
         cursorVertical+=element.offsetHeight
         checked=this.checkHigher(iterator,HiderElementsStack);
@@ -87,26 +83,37 @@ function Gallery(selector,options){
         }
       };
 
-    var myNodeList = document.querySelectorAll('#layout-grid .collage-grid-item');
+    var myNodeList = document.querySelectorAll(classComponent+' .collage-grid-item');
 
      var getSpects=function(index,value){
+        console.log();
         ratioHiger=value.offsetHeight>value.offsetWidth+this.errorAspect;
         ratioWider= value.offsetWidth > value.offsetHeight + this.errorAspect;
         this.elementSpecs.push({"row":0,"ratioH":ratioHiger,"ratioW":ratioWider,"el": value});
       }
-       this.forEach(myNodeList,getSpects,this);
-
-        var DefaultOptions={
-        itemSelector:'.item',
-        columnWidth:'25%'
-        }
-    options=(typeof(options)!="undefined") ? options:DefaultOptions;
+    this.forEach(myNodeList,getSpects,this);
     this.setPositions(this.elementSpecs,this.contentWidth);
+
 }
 
 window.onload=function(){
-  selector=document.querySelector('#container ');
-  gallery=new Gallery(selector,{
-    itemSelector:".collage-grid-item"
-  });
+  stackRepetitives=[];
+  collages=document.querySelectorAll("[data-component]");
+
+  [].forEach.call(collages, function(collage) {
+    classes=collage.getAttribute("class");
+    if(stackRepetitives.indexOf(classes)!= -1){
+      collage.removeAttribute("class");
+      collage.setAttribute("class", classes+"-2");
+      l=collage.getAttribute("class");
+      gallery=new Gallery(l);
+    }
+    else{
+      stackRepetitives.push(classes);
+      c=collage.getAttribute("class");
+      gallery=new Gallery(c);
+    }
+
+   
+  } );
 }
